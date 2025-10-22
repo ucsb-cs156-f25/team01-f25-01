@@ -17,7 +17,7 @@ TODO: Fill in this table with correct information.
 |---------------------------|--------------|-----------|
 | UCSBDiningCommonsMenuItem | Nathan       | ngostream |
 | UCSBOrganization          | Yi           |WilliamLinA|
-| RecommendationRequest     | Willaim      | WLL1am    |
+| RecommendationRequest     | William      | WLL1am    |
 | MenuItemReview            | Noah         | noahzlouie|
 | HelpRequest               | John         | jjohnvu   |
 | Articles                  | Nic          | nicxs3    |
