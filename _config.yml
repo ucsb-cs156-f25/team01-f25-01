@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOBwqWJQ","is_bot":false,"login":"WLL1am","name":"William Chung"},"headRefName":"wc-create-db-recommendationrequest","number":45,"title":"wc - create database table for recommendation requests","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/45"}]
+pull_requests: [{"author":{"id":"U_kgDOCl4-hw","is_bot":false,"login":"ngostream","name":"Nathan Ngo"},"headRefName":"nn-UCSBDiningCommonsMenuItem-create-db","number":46,"title":"nn - create database table for UCSBDiningCommonsMenuItem","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/46"},{"author":{"id":"U_kgDOBwqWJQ","is_bot":false,"login":"WLL1am","name":"William Chung"},"headRefName":"wc-create-db-recommendationrequest","number":45,"title":"wc - create database table for recommendation requests","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/45"}]
