@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOB7yQrQ","is_bot":false,"login":"WilliamLinA","name":""},"headRefName":"14-UCSBOrganization-create-db","number":47,"title":"pc - create database table for UCSBOrganizations","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/47"}]
+pull_requests: []
