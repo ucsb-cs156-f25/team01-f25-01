@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -293,5 +294,62 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
     verify(recommendationRequestRepository, times(1)).findById(67L);
     Map<String, Object> json = responseToJson(response);
     assertEquals("RecommendationRequest with id 67 not found", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_delete_a_recommendationrequest() throws Exception {
+    // arrange
+
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+    RecommendationRequest recommendationRequest1 =
+        RecommendationRequest.builder()
+            .requesterEmail("requester@gmail.com")
+            .professorEmail("professor@gmail.com")
+            .explanation("explanation")
+            .dateRequested(ldt1)
+            .dateNeeded(ldt1)
+            .done(false)
+            .build();
+
+    when(recommendationRequestRepository.findById(eq(15L)))
+        .thenReturn(Optional.of(recommendationRequest1));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/recommendationrequests?id=15").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1)).findById(15L);
+    verify(recommendationRequestRepository, times(1)).delete(eq(recommendationRequest1));
+
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("RecommendationRequest with id 15 deleted", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void
+      admin_tries_to_delete_non_existant_recommendationrequest_and_gets_right_error_message()
+          throws Exception {
+    // arrange
+
+    when(recommendationRequestRepository.findById(eq(15L))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/recommendationrequests?id=15").with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(recommendationRequestRepository, times(1)).findById(15L);
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("RecommendationRequest with id 15 not found", json.get("message"));
   }
 }
