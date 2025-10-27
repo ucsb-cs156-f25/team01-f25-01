@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOCl4-hw","is_bot":false,"login":"ngostream","name":"Nathan Ngo"},"headRefName":"nn-UCSBDiningCommonsMenuItem-create-UCSBDiningCommonsMenuItemController","number":51,"title":"nn - create ucsb dining commons menu item controller with get and post","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/51"}]
+pull_requests: [{"author":{"id":"U_kgDOBwqWJQ","is_bot":false,"login":"WLL1am","name":"William Chung"},"headRefName":"wc-delete-for-recommendationrequests-table","number":52,"title":"wc - add DELETE endpoint to recommendationrequests controller","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/52"},{"author":{"id":"U_kgDOCl4-hw","is_bot":false,"login":"ngostream","name":"Nathan Ngo"},"headRefName":"nn-UCSBDiningCommonsMenuItem-create-UCSBDiningCommonsMenuItemController","number":51,"title":"nn - create ucsb dining commons menu item controller with get and post","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/51"}]
