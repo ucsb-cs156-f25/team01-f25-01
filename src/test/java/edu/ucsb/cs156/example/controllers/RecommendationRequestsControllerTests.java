@@ -111,7 +111,7 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
             .explanation("explanation")
             .dateRequested(ldt1)
             .dateNeeded(ldt1)
-            .done(false)
+            .done(true)
             .build();
 
     when(recommendationRequestRepository.save(eq(recommendationRequest1)))
@@ -121,7 +121,7 @@ public class RecommendationRequestsControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                post("/api/recommendationrequests/post?requesterEmail=requester@gmail.com&professorEmail=professor@gmail.com&explanation=explanation&dateRequested=2022-01-03T00:00:00&dateNeeded=2022-01-03T00:00:00&done=false")
+                post("/api/recommendationrequests/post?requesterEmail=requester@gmail.com&professorEmail=professor@gmail.com&explanation=explanation&dateRequested=2022-01-03T00:00:00&dateNeeded=2022-01-03T00:00:00&done=true")
                     .with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
