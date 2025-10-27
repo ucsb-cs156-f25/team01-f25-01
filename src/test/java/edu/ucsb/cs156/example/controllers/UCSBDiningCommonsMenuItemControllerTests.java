@@ -35,7 +35,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
   @Test
   public void logged_out_users_cannot_get_all() throws Exception {
     mockMvc
-        .perform(get("/api/ucsbdiningcommmonsmenuitem/all"))
+        .perform(get("/api/ucsbdiningcommonsmenuitems/all"))
         .andExpect(status().is(403)); // logged out users can't get all
   }
 
@@ -43,20 +43,20 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
   @Test
   public void logged_in_users_can_get_all() throws Exception {
     mockMvc
-        .perform(get("/api/ucsbdiningcommmonsmenuitem/all"))
+        .perform(get("/api/ucsbdiningcommonsmenuitems/all"))
         .andExpect(status().is(200)); // logged
   }
 
   @Test
   public void logged_out_users_cannot_post() throws Exception {
-    mockMvc.perform(post("/api/ucsbdiningcommmonsmenuitem/post")).andExpect(status().is(403));
+    mockMvc.perform(post("/api/ucsbdiningcommonsmenuitems/post")).andExpect(status().is(403));
   }
 
   @WithMockUser(roles = {"USER"})
   @Test
   public void logged_in_regular_users_cannot_post() throws Exception {
     mockMvc
-        .perform(post("/api/ucsbdiningcommmonsmenuitem/post"))
+        .perform(post("/api/ucsbdiningcommonsmenuitems/post"))
         .andExpect(status().is(403)); // only admins can post
   }
 
@@ -83,7 +83,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     // act
     MvcResult response =
         mockMvc
-            .perform(get("/api/ucsbdiningcommmonsmenuitem/all"))
+            .perform(get("/api/ucsbdiningcommonsmenuitems/all"))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -110,7 +110,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     MvcResult response =
         mockMvc
             .perform(
-                post("/api/ucsbdiningcommmonsmenuitem/post")
+                post("/api/ucsbdiningcommonsmenuitems/post")
                     .with(csrf())
                     .param("diningCommonsCode", "de-la-guerra")
                     .param("name", "Pizza")

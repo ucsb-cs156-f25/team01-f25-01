@@ -1,6 +1,5 @@
 package edu.ucsb.cs156.example.controllers;
 
-
 import edu.ucsb.cs156.example.entities.UCSBDiningCommonsMenuItem;
 import edu.ucsb.cs156.example.repositories.UCSBDiningCommonsMenuItemRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** This is a REST controller for UCSBDiningCommonsMenuItem */
-@Tag(name = "UCSBDiningCommonsMenuItem")
-@RequestMapping("/api/ucsbdiningcommmonsmenuitem")
+@Tag(name = "UCSBDiningCommonsMenuItems")
+@RequestMapping("/api/ucsbdiningcommonsmenuitems")
 @RestController
 @Slf4j
 public class UCSBDiningCommonsMenuItemController extends ApiController {
