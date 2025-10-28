@@ -17,6 +17,8 @@ import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -48,6 +50,13 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
   }
 
   @Test
+  public void logged_out_users_cannot_get_by_id() throws Exception {
+    mockMvc
+        .perform(get("/api/ucsbdiningcommonsmenuitems?id=7"))
+        .andExpect(status().is(403)); // logged out users can't get by id
+  }
+
+  @Test
   public void logged_out_users_cannot_post() throws Exception {
     mockMvc.perform(post("/api/ucsbdiningcommonsmenuitems/post")).andExpect(status().is(403));
   }
@@ -60,20 +69,78 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
         .andExpect(status().is(403)); // only admins can post
   }
 
+  // // Tests with mocks for database actions
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+
+    // arrange
+    UCSBDiningCommonsMenuItem item =
+        UCSBDiningCommonsMenuItem.builder()
+            .diningCommonsCode("de-la-guerra")
+            .name("Pizza")
+            .station("Entree")
+            .build();
+
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(7L))).thenReturn(Optional.of(item));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/ucsbdiningcommonsmenuitems?id=7"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq(7L));
+    String expectedJson = mapper.writeValueAsString(item);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+
+    // arrange
+
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(7L))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/ucsbdiningcommonsmenuitems?id=7"))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(eq(7L));
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("EntityNotFoundException", json.get("type"));
+    assertEquals("UCSBDiningCommonsMenuItem with id 7 not found", json.get("message"));
+  }
+
   // test for GET /all
   @WithMockUser(roles = {"USER"})
   @Test
   public void logged_in_user_can_get_all_menu_items() throws Exception {
     // arrange
-    UCSBDiningCommonsMenuItem item1 = new UCSBDiningCommonsMenuItem();
-    item1.setDiningCommonsCode("de-la-guerra");
-    item1.setName("Pizza");
-    item1.setStation("Entree");
+    UCSBDiningCommonsMenuItem item1 =
+        UCSBDiningCommonsMenuItem.builder()
+            .diningCommonsCode("de-la-guerra")
+            .name("Pizza")
+            .station("Entree")
+            .build();
 
-    UCSBDiningCommonsMenuItem item2 = new UCSBDiningCommonsMenuItem();
-    item2.setDiningCommonsCode("ortega");
-    item2.setName("Salad");
-    item2.setStation("Salad Bar");
+    UCSBDiningCommonsMenuItem item2 =
+        UCSBDiningCommonsMenuItem.builder()
+            .diningCommonsCode("ortega")
+            .name("Salad")
+            .station("Salad Bar")
+            .build();
 
     ArrayList<UCSBDiningCommonsMenuItem> expectedItems =
         new ArrayList<>(Arrays.asList(item1, item2));
@@ -96,13 +163,15 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void an_admin_user_can_post_a_new_ucsbdate() throws Exception {
+  public void an_admin_user_can_post_a_new_menu_item() throws Exception {
     // arrange
 
-    UCSBDiningCommonsMenuItem item1 = new UCSBDiningCommonsMenuItem();
-    item1.setDiningCommonsCode("de-la-guerra");
-    item1.setName("Pizza");
-    item1.setStation("Entree");
+    UCSBDiningCommonsMenuItem item1 =
+        UCSBDiningCommonsMenuItem.builder()
+            .diningCommonsCode("de-la-guerra")
+            .name("Pizza")
+            .station("Entree")
+            .build();
 
     when(ucsbDiningCommonsMenuItemRepository.save(eq(item1))).thenReturn(item1);
 
