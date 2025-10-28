@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** This is a JPA entity that represents a UCSB Menu Item Review. */
+/** This is a JPA entity that represents a UCSB Menu Item Review */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
