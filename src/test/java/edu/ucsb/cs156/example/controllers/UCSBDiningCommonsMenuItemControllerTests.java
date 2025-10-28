@@ -8,17 +8,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import edu.ucsb.cs156.example.ControllerTestCase;
 import edu.ucsb.cs156.example.entities.UCSBDiningCommonsMenuItem;
-import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.UCSBDiningCommonsMenuItemRepository;
 import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -27,12 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @WebMvcTest(controllers = UCSBDiningCommonsMenuItemController.class)
 @Import(TestConfig.class)
@@ -202,31 +196,81 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     assertEquals(expectedJson, responseString);
   }
 
-  /**
-   * Update a single dining hall menu item
-   *
-   * @param id id of the menu item to update
-   * @param incoming the menu item
-   * @return the updated menu item object
-   */
-  @Operation(summary = "Update a single menu item")
-  @PreAuthorize("hasRole('ROLE_ADMIN')")
-  @PutMapping("")
-  public UCSBDiningCommonsMenuItem updateUCSBDiningCommonsMenuItem(
-      @Parameter(name = "id") @RequestParam Long id,
-      @RequestBody @Valid UCSBDiningCommonsMenuItem incoming) {
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_edit_an_existing_ucsbdiningcommonsmenuitem() throws Exception {
+    // arrange
 
-    UCSBDiningCommonsMenuItem ucsbDiningCommonsMenuItem =
-        ucsbDiningCommonsMenuItemRepository
-            .findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));
+    UCSBDiningCommonsMenuItem ucsbDiningCommonsMenuItemOrig =
+        UCSBDiningCommonsMenuItem.builder()
+            .diningCommonsCode("ortega")
+            .name("Chicken Caesar Salad")
+            .station("entree")
+            .build();
 
-    ucsbDiningCommonsMenuItem.setDiningCommonsCode(incoming.getDiningCommonsCode());
-    ucsbDiningCommonsMenuItem.setName(incoming.getName());
-    ucsbDiningCommonsMenuItem.setStation(incoming.getStation());
+    UCSBDiningCommonsMenuItem ucsbDateEdited =
+        UCSBDiningCommonsMenuItem.builder()
+            .diningCommonsCode("ortega")
+            .name("Chicken Caesar Salad")
+            .station("Entrees")
+            .build();
 
-    ucsbDiningCommonsMenuItemRepository.save(ucsbDiningCommonsMenuItem);
+    String requestBody = mapper.writeValueAsString(ucsbDateEdited);
 
-    return ucsbDiningCommonsMenuItem;
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(67L)))
+        .thenReturn(Optional.of(ucsbDiningCommonsMenuItemOrig));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/ucsbdiningcommonsmenuitems?id=67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(67L);
+    verify(ucsbDiningCommonsMenuItemRepository, times(1))
+        .save(ucsbDateEdited); // should be saved with correct user
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(requestBody, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_cannot_edit_ucsbdiningcommonsmenuitem_that_does_not_exist() throws Exception {
+    // arrange
+
+    UCSBDiningCommonsMenuItem ucsbEditedDiningCommonsMenuItem =
+        UCSBDiningCommonsMenuItem.builder()
+            .diningCommonsCode("de-la-guerra")
+            .name("Sicilian Sandwich")
+            .station("Blue Plate Special")
+            .build();
+
+    String requestBody = mapper.writeValueAsString(ucsbEditedDiningCommonsMenuItem);
+
+    when(ucsbDiningCommonsMenuItemRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/ucsbdiningcommonsmenuitems?id=67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(ucsbDiningCommonsMenuItemRepository, times(1)).findById(67L);
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBDiningCommonsMenuItem with id 67 not found", json.get("message"));
   }
 }
