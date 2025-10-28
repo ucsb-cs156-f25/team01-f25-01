@@ -12,9 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.ucsb.cs156.example.ControllerTestCase;
 import edu.ucsb.cs156.example.entities.UCSBDiningCommonsMenuItem;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.UCSBDiningCommonsMenuItemRepository;
 import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -23,8 +27,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @WebMvcTest(controllers = UCSBDiningCommonsMenuItemController.class)
 @Import(TestConfig.class)
@@ -163,7 +171,7 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
   @WithMockUser(roles = {"ADMIN", "USER"})
   @Test
-  public void an_admin_user_can_post_a_new_menu_item() throws Exception {
+  public void an_admin_user_can_post_a_new_ucsbDiningCommonsMenuItem() throws Exception {
     // arrange
 
     UCSBDiningCommonsMenuItem item1 =
@@ -192,5 +200,33 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
     String expectedJson = mapper.writeValueAsString(item1);
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
+  }
+
+  /**
+   * Update a single dining hall menu item
+   *
+   * @param id id of the menu item to update
+   * @param incoming the menu item
+   * @return the updated menu item object
+   */
+  @Operation(summary = "Update a single menu item")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  @PutMapping("")
+  public UCSBDiningCommonsMenuItem updateUCSBDiningCommonsMenuItem(
+      @Parameter(name = "id") @RequestParam Long id,
+      @RequestBody @Valid UCSBDiningCommonsMenuItem incoming) {
+
+    UCSBDiningCommonsMenuItem ucsbDiningCommonsMenuItem =
+        ucsbDiningCommonsMenuItemRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(UCSBDiningCommonsMenuItem.class, id));
+
+    ucsbDiningCommonsMenuItem.setDiningCommonsCode(incoming.getDiningCommonsCode());
+    ucsbDiningCommonsMenuItem.setName(incoming.getName());
+    ucsbDiningCommonsMenuItem.setStation(incoming.getStation());
+
+    ucsbDiningCommonsMenuItemRepository.save(ucsbDiningCommonsMenuItem);
+
+    return ucsbDiningCommonsMenuItem;
   }
 }
