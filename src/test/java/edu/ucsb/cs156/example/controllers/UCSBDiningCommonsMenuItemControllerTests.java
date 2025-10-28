@@ -210,9 +210,9 @@ public class UCSBDiningCommonsMenuItemControllerTests extends ControllerTestCase
 
     UCSBDiningCommonsMenuItem ucsbDateEdited =
         UCSBDiningCommonsMenuItem.builder()
-            .diningCommonsCode("ortega")
-            .name("Chicken Caesar Salad")
-            .station("Entrees")
+            .diningCommonsCode("carrillo")
+            .name("Vietnamese Pork Banh Mi")
+            .station("Euro")
             .build();
 
     String requestBody = mapper.writeValueAsString(ucsbDateEdited);
