@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOBwqWJQ","is_bot":false,"login":"WLL1am","name":"William Chung"},"headRefName":"wc-update-readme-links-titles","number":62,"title":"wc - changed readme with updated links and titles","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/62"}]
+pull_requests: [{"author":{"id":"U_kgDOBkhdrg","is_bot":false,"login":"nicxs3","name":"Nic Santos"},"headRefName":"ns-Articles-create-controller","number":64,"title":"ns - create Articles controller with GET and POST","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/64"},{"author":{"id":"U_kgDOBwqWJQ","is_bot":false,"login":"WLL1am","name":"William Chung"},"headRefName":"wc-update-readme-links-titles","number":62,"title":"wc - changed readme with updated links and titles","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/62"}]
