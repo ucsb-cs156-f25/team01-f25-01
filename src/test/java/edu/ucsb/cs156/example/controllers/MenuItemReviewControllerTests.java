@@ -133,4 +133,92 @@ public class MenuItemReviewControllerTests extends ControllerTestCase {
     String responseString = response.getResponse().getContentAsString();
     assertEquals(expectedJson, responseString);
   }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_edit_an_existing_menuitemreview() throws Exception {
+    // arrange
+
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+    LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
+
+    MenuItemReview menuItemReviewOrig =
+        MenuItemReview.builder()
+            .itemId(2)
+            .reviewerEmail("test@ucsb.edu")
+            .stars(2)
+            .dateReviewed(ldt1)
+            .comments("ok")
+            .build();
+
+    MenuItemReview menuItemReviewEdited =
+        MenuItemReview.builder()
+            .itemId(4)
+            .reviewerEmail("different@ucsb.edu")
+            .stars(3)
+            .dateReviewed(ldt2)
+            .comments("tough")
+            .build();
+
+    String requestBody = mapper.writeValueAsString(menuItemReviewEdited);
+
+    when(menuItemReviewRepository.findById(eq(67L))).thenReturn(Optional.of(menuItemReviewOrig));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/menuitemreview?id=67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(menuItemReviewRepository, times(1)).findById(67L);
+    verify(menuItemReviewRepository, times(1))
+        .save(menuItemReviewEdited); // should be saved with correct user
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(requestBody, responseString);
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_cannot_edit_menuitemreview_that_does_not_exist() throws Exception {
+    // arrange
+
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+    MenuItemReview menuItemReviewEdited =
+        MenuItemReview.builder()
+            .itemId(8)
+            .reviewerEmail("test@ucsb.edu")
+            .stars(3)
+            .dateReviewed(ldt1)
+            .comments("great")
+            .build();
+
+    String requestBody = mapper.writeValueAsString(menuItemReviewEdited);
+
+    when(menuItemReviewRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/menuitemreview?id=67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(requestBody)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+    verify(menuItemReviewRepository, times(1)).findById(67L);
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("UCSBDate with id 67 not found", json.get("message"));
+  }
 }
