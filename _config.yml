@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOBwqWJQ","is_bot":false,"login":"WLL1am","name":"William Chung"},"headRefName":"wc-update-readme-links-titles","number":62,"title":"wc - changed readme with updated links and titles","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/62"}]
+pull_requests: [{"author":{"id":"U_kgDOB7yQrQ","is_bot":false,"login":"WilliamLinA","name":""},"headRefName":"yl-create-controller-UCSBorganization","number":63,"title":"Yl create controller ucs borganization","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/63"},{"author":{"id":"U_kgDOBwqWJQ","is_bot":false,"login":"WLL1am","name":"William Chung"},"headRefName":"wc-update-readme-links-titles","number":62,"title":"wc - changed readme with updated links and titles","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/62"}]
