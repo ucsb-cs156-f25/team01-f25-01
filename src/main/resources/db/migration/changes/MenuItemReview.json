@@ -12,7 +12,7 @@
               "not": [
                 {
                   "tableExists": {
-                    "tableName": "MENUITEMREVIEWS"
+                    "tableName": "MENU_ITEM_REVIEWS"
                   }
                 }
               ]
@@ -47,6 +47,12 @@
                   },
                   {
                     "column": {
+                      "name": "STARS",
+                      "type": "INT"
+                    }
+                  },
+                  {
+                    "column": {
                       "name": "DATE_REVIEWED",
                       "type": "TIMESTAMP"
                     }
@@ -58,7 +64,7 @@
                     }
                   }
                 ],
-                "tableName": "MENUITEMREVIEWS"
+                "tableName": "MENU_ITEM_REVIEWS"
               }
             }
           ]
