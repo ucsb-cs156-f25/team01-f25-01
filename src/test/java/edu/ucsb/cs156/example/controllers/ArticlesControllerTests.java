@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -188,5 +189,38 @@ public class ArticlesControllerTests extends ControllerTestCase {
     Map<String, Object> json = responseToJson(response);
     assertEquals("EntityNotFoundException", json.get("type"));
     assertEquals("Article with id 7 not found", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_delete_a_article() throws Exception {
+    // arrange
+
+    LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+
+    Article article1 =
+        Article.builder()
+            .title("First-Article")
+            .url("http://example.com/1")
+            .explanation("This-is-the-first-article")
+            .email("user@example.com")
+            .dateAdded(ldt1)
+            .build();
+
+    when(articleRepository.findById(eq(15L))).thenReturn(Optional.of(article1));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(delete("/api/articles?id=15").with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+    verify(articleRepository, times(1)).findById(15L);
+    verify(articleRepository, times(1)).delete(eq(article1));
+
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("Article with id 15 deleted", json.get("message"));
   }
 }
