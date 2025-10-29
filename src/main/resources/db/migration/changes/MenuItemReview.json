@@ -47,6 +47,12 @@
                   },
                   {
                     "column": {
+                      "name": "STARS",
+                      "type": "INT"
+                    }
+                  },
+                  {
+                    "column": {
                       "name": "DATE_REVIEWED",
                       "type": "TIMESTAMP"
                     }

@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /** This is a REST controller for MenuItemReviews */
-@Tag(name = "MenuItemReviews")
-@RequestMapping("/api/menuitemreviews")
+@Tag(name = "MenuItemReview")
+@RequestMapping("/api/menuitemreview")
 @RestController
 @Slf4j
-public class MenuItemReviewsController extends ApiController {
+public class MenuItemReviewController extends ApiController {
 
   @Autowired MenuItemReviewRepository menuItemReviewRepository;
 
@@ -44,6 +44,7 @@ public class MenuItemReviewsController extends ApiController {
    *
    * @param itemId reviewed item's id of the menuItemReview
    * @param reviewerEmail reviewer's email of the menuItemReview
+   * @param stars the number of stars rated of the menuItemReview
    * @param dateReviewed the date of the menuItemReview
    * @param comments comments of the menuItemReview
    * @return the saved menuItemReview
@@ -54,6 +55,7 @@ public class MenuItemReviewsController extends ApiController {
   public MenuItemReview postMenuItemReview(
       @Parameter(name = "itemId") @RequestParam long itemId,
       @Parameter(name = "reviewerEmail") @RequestParam String reviewerEmail,
+      @Parameter(name = "stars") @RequestParam int stars,
       @Parameter(
               name = "dateReviewed",
               description =
@@ -72,6 +74,7 @@ public class MenuItemReviewsController extends ApiController {
     MenuItemReview menuItemReview = new MenuItemReview();
     menuItemReview.setItemId(itemId);
     menuItemReview.setReviewerEmail(reviewerEmail);
+    menuItemReview.setStars(stars);
     menuItemReview.setDateReviewed(dateReviewed);
     menuItemReview.setComments(comments);
 
