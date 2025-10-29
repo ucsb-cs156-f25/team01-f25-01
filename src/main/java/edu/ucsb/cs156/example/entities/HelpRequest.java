@@ -1,35 +1,30 @@
 package edu.ucsb.cs156.example.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "HELPREQUESTS")
+/** This is a JPA entity that represents a Github HelpRequest. */
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity(name = "helprequests")
 public class HelpRequest {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  private long id;
 
-  @Column(name = "REQUESTER_EMAIL")
   private String requesterEmail;
-
-  @Column(name = "TEAM_ID")
   private String teamId;
-
-  @Column(name = "TABLE_OR_BREAKOUT_ROOM")
   private String tableOrBreakoutRoom;
-
-  @Column(name = "REQUEST_TIME")
   private LocalDateTime requestTime;
-
-  @Column(name = "EXPLANATION")
   private String explanation;
-
-  @Column(name = "SOLVED")
   private boolean solved;
 }
