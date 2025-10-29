@@ -15,6 +15,8 @@ import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -114,6 +116,51 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     // assert
     verify(helpRequestRepository, times(1)).save(eq(toSave));
     String expectedJson = mapper.writeValueAsString(toSave);
+    assertEquals(expectedJson, response.getResponse().getContentAsString());
+  }
+
+  // --- GET /api/helprequest?id=... ---
+
+  @Test
+  public void logged_out_users_cannot_get_by_id() throws Exception {
+    mockMvc.perform(get("/api/helprequest?id=7")).andExpect(status().is(403));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void logged_in_user_get_by_id_not_found() throws Exception {
+    when(helpRequestRepository.findById(eq(7L))).thenReturn(Optional.empty());
+
+    MvcResult response =
+        mockMvc.perform(get("/api/helprequest?id=7")).andExpect(status().isNotFound()).andReturn();
+
+    verify(helpRequestRepository, times(1)).findById(eq(7L));
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("EntityNotFoundException", json.get("type"));
+    assertEquals("HelpRequest with id 7 not found", json.get("message"));
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void logged_in_user_get_by_id_success() throws Exception {
+    LocalDateTime t = LocalDateTime.parse("2022-01-03T00:00:00");
+    HelpRequest hr =
+        HelpRequest.builder()
+            .requesterEmail("pdg@ucsb.edu")
+            .teamId("s22-6pm-4")
+            .tableOrBreakoutRoom("13")
+            .requestTime(t)
+            .explanation("Need help with setup")
+            .solved(false)
+            .build();
+
+    when(helpRequestRepository.findById(eq(7L))).thenReturn(Optional.of(hr));
+
+    MvcResult response =
+        mockMvc.perform(get("/api/helprequest?id=7")).andExpect(status().isOk()).andReturn();
+
+    verify(helpRequestRepository, times(1)).findById(eq(7L));
+    String expectedJson = mapper.writeValueAsString(hr);
     assertEquals(expectedJson, response.getResponse().getContentAsString());
   }
 }
