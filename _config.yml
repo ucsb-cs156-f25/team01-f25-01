@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOBkhdrg","is_bot":false,"login":"nicxs3","name":"Nic Santos"},"headRefName":"ns-Articles-DELETE-endpoint","number":81,"title":"ns - Add DELETE endpoint for a specific record in Articles table","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/81"}]
+pull_requests: []
