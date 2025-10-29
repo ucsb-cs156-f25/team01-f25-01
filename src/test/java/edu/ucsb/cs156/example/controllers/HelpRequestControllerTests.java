@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import edu.ucsb.cs156.example.ControllerTestCase;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -162,5 +164,86 @@ public class HelpRequestControllerTests extends ControllerTestCase {
     verify(helpRequestRepository, times(1)).findById(eq(7L));
     String expectedJson = mapper.writeValueAsString(hr);
     assertEquals(expectedJson, response.getResponse().getContentAsString());
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_can_edit_existing_helprequest() throws Exception {
+    LocalDateTime t1 = LocalDateTime.parse("2022-01-03T00:00:00");
+    LocalDateTime t2 = LocalDateTime.parse("2023-01-04T00:00:00");
+
+    HelpRequest original =
+        HelpRequest.builder()
+            .requesterEmail("orig@ucsb.edu")
+            .teamId("01")
+            .tableOrBreakoutRoom("table1")
+            .requestTime(t1)
+            .explanation("Orig")
+            .solved(true)
+            .build();
+
+    HelpRequest edited =
+        HelpRequest.builder()
+            .requesterEmail("edit@ucsb.edu")
+            .teamId("02")
+            .tableOrBreakoutRoom("table2")
+            .requestTime(t2)
+            .explanation("Edited")
+            .solved(false)
+            .build();
+
+    when(helpRequestRepository.findById(eq(67L))).thenReturn(Optional.of(original));
+    when(helpRequestRepository.save(any(HelpRequest.class))).thenAnswer(inv -> inv.getArgument(0));
+
+    String body = mapper.writeValueAsString(edited);
+
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/helprequest?id=67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(body)
+                    .with(csrf()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    verify(helpRequestRepository, times(1)).findById(67L);
+    verify(helpRequestRepository, times(1)).save(any(HelpRequest.class));
+    assertEquals(body, response.getResponse().getContentAsString());
+  }
+
+  @WithMockUser(roles = {"ADMIN", "USER"})
+  @Test
+  public void admin_edit_returns_404_when_not_found() throws Exception {
+    LocalDateTime t1 = LocalDateTime.parse("2022-01-03T00:00:00");
+    HelpRequest payload =
+        HelpRequest.builder()
+            .requesterEmail("x@ucsb.edu")
+            .teamId("01")
+            .tableOrBreakoutRoom("table1")
+            .requestTime(t1)
+            .explanation("x")
+            .solved(true)
+            .build();
+
+    when(helpRequestRepository.findById(eq(67L))).thenReturn(Optional.empty());
+
+    String body = mapper.writeValueAsString(payload);
+
+    MvcResult response =
+        mockMvc
+            .perform(
+                put("/api/helprequest?id=67")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .characterEncoding("utf-8")
+                    .content(body)
+                    .with(csrf()))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    verify(helpRequestRepository, times(1)).findById(67L);
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("HelpRequest with id 67 not found", json.get("message"));
   }
 }
