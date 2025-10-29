@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOBkhdrg","is_bot":false,"login":"nicxs3","name":"Nic Santos"},"headRefName":"ns-Articles-PUT-single-record","number":82,"title":"ns - Add PUT (edit) endpoint for a single record in Articles table","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/82"}]
+pull_requests: []
