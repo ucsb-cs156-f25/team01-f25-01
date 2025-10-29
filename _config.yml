@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOCSk7nw","is_bot":false,"login":"jjohnvu","name":""},"headRefName":"jvu-helprequest-delete","number":79,"title":"jv - Add DELETE endpoint for a specific record in HelpRequest table","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/79"}]
+pull_requests: [{"author":{"id":"U_kgDOBkhdrg","is_bot":false,"login":"nicxs3","name":"Nic Santos"},"headRefName":"ns-Articles-GET-endpoint-single-record","number":80,"title":"ns - added GET by id in Articles controller","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/80"},{"author":{"id":"U_kgDOCSk7nw","is_bot":false,"login":"jjohnvu","name":""},"headRefName":"jvu-helprequest-delete","number":79,"title":"jv - Add DELETE endpoint for a specific record in HelpRequest table","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/79"}]
