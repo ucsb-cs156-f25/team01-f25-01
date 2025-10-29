@@ -115,7 +115,7 @@ import org.springframework.web.bind.annotation.RestController;
 <span class="fc" id="L115">    Article article =</span>
         articleRepository
 <span class="fc" id="L117">            .findById(id)</span>
-<span class="pc" id="L118">            .orElseThrow(() -&gt; new EntityNotFoundException(Article.class, id));</span>
+<span class="fc" id="L118">            .orElseThrow(() -&gt; new EntityNotFoundException(Article.class, id));</span>
 
 <span class="fc" id="L120">    articleRepository.delete(article);</span>
 <span class="fc" id="L121">    return genericMessage(&quot;Article with id %s deleted&quot;.formatted(id));</span>
