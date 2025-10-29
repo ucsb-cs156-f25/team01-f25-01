@@ -17,6 +17,8 @@ import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,6 +33,8 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
 
   @MockBean UserRepository userRepository;
 
+  // Authorization tests for /api/ucsborganizations/all
+
   @Test
   public void logged_out_users_cannot_get_all() throws Exception {
     mockMvc
@@ -42,6 +46,13 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
   @Test
   public void logged_in_users_can_get_all() throws Exception {
     mockMvc.perform(get("/api/ucsborganizations/all")).andExpect(status().is(200)); // logged
+  }
+
+  @Test
+  public void logged_out_users_cannot_get_by_id() throws Exception {
+    mockMvc
+        .perform(get("/api/ucsborganizations?orgCode=org1"))
+        .andExpect(status().is(403)); // logged out users can't get by id
   }
 
   // Authorization tests for /api/ucsborganizations/post
@@ -60,6 +71,62 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
         .andExpect(status().is(403)); // only admins can post
   }
 
+  // Tests with mocks for database actions
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+
+    // arrange
+
+    UCSBOrganizations org1 =
+        UCSBOrganizations.builder()
+            .orgCode("org1")
+            .orgTranslationShort("Org1")
+            .orgTranslation("Organization1")
+            .inactive(true)
+            .build();
+
+    when(ucsbOrganizationsRepository.findById(eq("org1"))).thenReturn(Optional.of(org1));
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/ucsborganizations?orgCode=org1"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+    // assert
+
+    verify(ucsbOrganizationsRepository, times(1)).findById(eq("org1"));
+    String expectedJson = mapper.writeValueAsString(org1);
+    String responseString = response.getResponse().getContentAsString();
+    assertEquals(expectedJson, responseString);
+  }
+
+  @WithMockUser(roles = {"USER"})
+  @Test
+  public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+
+    // arrange
+
+    when(ucsbOrganizationsRepository.findById(eq("noorgg"))).thenReturn(Optional.empty());
+
+    // act
+    MvcResult response =
+        mockMvc
+            .perform(get("/api/ucsborganizations?orgCode=noorgg"))
+            .andExpect(status().isNotFound())
+            .andReturn();
+
+    // assert
+
+    verify(ucsbOrganizationsRepository, times(1)).findById(eq("noorgg"));
+    Map<String, Object> json = responseToJson(response);
+    assertEquals("EntityNotFoundException", json.get("type"));
+    assertEquals("UCSBOrganizations with id noorgg not found", json.get("message"));
+  }
+
   @WithMockUser(roles = {"USER"})
   @Test
   public void logged_in_user_can_get_all_ucsborganizations() throws Exception {
@@ -71,7 +138,7 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
             .orgCode("org1")
             .orgTranslationShort("Org1")
             .orgTranslation("Organization1")
-            .inactive(false)
+            .inactive(true)
             .build();
 
     UCSBOrganizations org2 =
@@ -108,7 +175,7 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
             .orgCode("org")
             .orgTranslationShort("Org")
             .orgTranslation("Organization")
-            .inactive(false)
+            .inactive(true)
             .build();
 
     when(ucsbOrganizationsRepository.save(eq(org1))).thenReturn(org1);
@@ -117,7 +184,7 @@ public class UCSBOrganizationsControllerTests extends ControllerTestCase {
     MvcResult response =
         mockMvc
             .perform(
-                post("/api/ucsborganizations/post?orgCode=org&orgTranslationShort=Org&orgTranslation=Organization&inactive=false")
+                post("/api/ucsborganizations/post?orgCode=org&orgTranslationShort=Org&orgTranslation=Organization&inactive=true")
                     .with(csrf()))
             .andExpect(status().isOk())
             .andReturn();
