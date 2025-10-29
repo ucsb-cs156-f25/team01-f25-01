@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-f25/team01-f25-01
 owner: ucsb-cs156-f25
 repo_name: team01-f25-01
-pull_requests: [{"author":{"id":"U_kgDOCO5ODw","is_bot":false,"login":"noahzlouie","name":"Noah Louie"},"headRefName":"nl-MenuItemReview-db","number":61,"title":"nl - create database tables for MenuItemReview","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/61"}]
+pull_requests: [{"author":{"id":"U_kgDOBwqWJQ","is_bot":false,"login":"WLL1am","name":"William Chung"},"headRefName":"wc-update-readme-links-titles","number":62,"title":"wc - changed readme with updated links and titles","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/62"},{"author":{"id":"U_kgDOCO5ODw","is_bot":false,"login":"noahzlouie","name":"Noah Louie"},"headRefName":"nl-MenuItemReview-db","number":61,"title":"nl - create database tables for MenuItemReview","url":"https://github.com/ucsb-cs156-f25/team01-f25-01/pull/61"}]
